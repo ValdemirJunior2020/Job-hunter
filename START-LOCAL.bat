@@ -11,8 +11,8 @@ echo Syncing Node packages...
 call npm install
 if errorlevel 1 goto :error
 
-if not exist "D:\JobHunter" mkdir "D:\JobHunter"
-if not exist "D:\JobHunter\resumes" mkdir "D:\JobHunter\resumes"
+if not exist "E:\JobHunter" mkdir "E:\JobHunter"
+if not exist "E:\JobHunter\resumes" mkdir "E:\JobHunter\resumes"
 
 start "Job Hunter Backend" cmd /k "npm run server"
 timeout /t 2 /nobreak >nul
