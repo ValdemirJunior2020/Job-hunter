@@ -147,12 +147,12 @@ export default function App(){
       <div className="brand"><div className="brand-mark">JH</div><div><strong>Job Hunter</strong><span>Junior</span></div></div>
       <nav>{['Best Matches','Saved','Applied','Ignored'].map(item=><button key={item} className={tab===item?'nav-item active':'nav-item'} onClick={()=>setTab(item)}><Icon name={item==='Saved'?'star':item==='Applied'?'check':item==='Ignored'?'x':'briefcase'}/>{item}{item==='Saved'&&<b>{stats.saved}</b>}{item==='Applied'&&<b>{stats.applied}</b>}</button>)}</nav>
       <div className={connected?'connection-card online':'connection-card'}>
-        <span className="connection-dot"/><div><strong>{connected?'PC Backend Online':'PC Backend Offline'}</strong><span>{connected?(ollama.online?`Ollama: ${ollama.model||'online'}`:'Ollama offline'):'Connect to your D: database'}</span></div>
+        <span className="connection-dot"/><div><strong>{connected?'PC Backend Online':'PC Backend Offline'}</strong><span>{connected?(ollama.online?`Ollama: ${ollama.model||'online'}`:'Ollama service offline'):'Connect to your D: database'}</span></div>
       </div>
     </aside>
 
     <main>
-      <header><div><p className="eyebrow">NETLIFY FRONTEND · YOUR PC BACKEND</p><h1>Find less. Match better. Apply faster.</h1><p>Your database, CVs, job history, and AI analysis stay on your Windows PC under <b>D:\\JobHunter</b>.</p></div><button className="profile-button" onClick={()=>setShowProfile(!showProfile)}><Icon name="user"/> My Profile</button></header>
+      <header><div><p className="eyebrow">NETLIFY FRONTEND · YOUR PC BACKEND</p><h1>Find less. Match better. Apply faster.</h1><p>Your database, CVs, job history, and saved AI results stay under <b>D:\\JobHunter</b>. Ollama runs separately as your normal local Windows service.</p></div><button className="profile-button" onClick={()=>setShowProfile(!showProfile)}><Icon name="user"/> My Profile</button></header>
 
       <section className="connect-panel">
         <div className="section-heading"><div><span className="kicker">PRIVATE BACKEND</span><h2>Connect Netlify to your PC</h2></div><span className={connected?'badge-ok':'badge-warn'}>{connected?'CONNECTED':'NOT CONNECTED'}</span></div>
