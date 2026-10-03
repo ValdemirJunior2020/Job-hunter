@@ -38,6 +38,9 @@ npm install
 npm run dev
 ```
 
+Local frontend: `http://localhost:5180`
+Local backend: `http://127.0.0.1:8788`
+
 Or double-click:
 
 - `START-LOCAL.bat` — starts backend + local frontend
