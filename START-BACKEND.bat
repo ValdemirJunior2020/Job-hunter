@@ -7,7 +7,6 @@ echo ==========================================
 echo   Job Hunter Junior - Local PC Backend
 echo ==========================================
 echo.
-echo Storage: E:\JobHunter
 echo API:     http://127.0.0.1:8788
 echo Ollama:  http://127.0.0.1:11434
 echo.
@@ -15,10 +14,8 @@ echo Syncing Node packages...
 call npm install
 if errorlevel 1 goto :error
 
-if not exist "E:\JobHunter" mkdir "E:\JobHunter"
-if not exist "E:\JobHunter\resumes" mkdir "E:\JobHunter\resumes"
-
 echo Starting backend...
+echo The server will reuse an existing D:\JobHunter or E:\JobHunter automatically.
 echo.
 call npm run server
 goto :eof
