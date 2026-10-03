@@ -10,7 +10,15 @@ import crypto from 'node:crypto';
 const app = express();
 const PORT = Number(process.env.PORT || 8788);
 const HOST = process.env.HOST || '127.0.0.1';
-const DATA_DIR = process.env.JOB_HUNTER_DATA_DIR || 'E:\\JobHunter';
+function chooseDataDir() {
+  if (process.env.JOB_HUNTER_DATA_DIR) return process.env.JOB_HUNTER_DATA_DIR;
+  if (fs.existsSync('D:\\JobHunter')) return 'D:\\JobHunter';
+  if (fs.existsSync('E:\\JobHunter')) return 'E:\\JobHunter';
+  if (fs.existsSync('D:\\')) return 'D:\\JobHunter';
+  if (fs.existsSync('E:\\')) return 'E:\\JobHunter';
+  return path.join(process.env.USERPROFILE || process.cwd(), 'JobHunter');
+}
+const DATA_DIR = chooseDataDir();
 const DB_PATH = path.join(DATA_DIR, 'job-hunter.db');
 const RESUME_DIR = path.join(DATA_DIR, 'resumes');
 const CONFIG_PATH = path.join(DATA_DIR, 'config.json');
