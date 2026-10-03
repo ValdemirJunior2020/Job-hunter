@@ -14,4 +14,4 @@ start "Job Hunter Backend" cmd /k "npm run server"
 timeout /t 2 /nobreak >nul
 start "Job Hunter Frontend" cmd /k "npm run client"
 timeout /t 2 /nobreak >nul
-start "" "http://localhost:5173"
+start "" "http://localhost:5180"
