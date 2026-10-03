@@ -11,22 +11,22 @@ Netlify React frontend
         v
 Your Windows PC
   ├─ Node/Express private API
-  ├─ SQLite database: D:\JobHunter\job-hunter.db
-  ├─ CV files: D:\JobHunter\resumes\
+  ├─ SQLite database: E:\JobHunter\job-hunter.db
+  ├─ CV files: E:\JobHunter\resumes\
   └─ saved Ollama evaluations in SQLite
 
 Ollama runs separately as its normal local Windows service:
 http://127.0.0.1:11434
 ```
 
-**D:\JobHunter is storage only. Ollama does not run from D:.**
+**E:\JobHunter is storage only. Ollama does not run from D:.**
 
 ## First local run
 
 Requirements:
 
 - Node.js 20+ recommended
-- A `D:` drive
+- An `E:` drive
 - Ollama installed if you want AI scoring
 
 Clone and run:
@@ -49,7 +49,7 @@ Or double-click:
 On the first backend start it automatically creates:
 
 ```
-D:\JobHunter\
+E:\JobHunter\
 ├── job-hunter.db
 ├── config.json
 └── resumes\
@@ -58,7 +58,7 @@ D:\JobHunter\
 The private access key is inside:
 
 ```
-D:\JobHunter\config.json
+E:\JobHunter\config.json
 ```
 
 Do not commit or publish that key.
@@ -93,7 +93,7 @@ Supported files:
 - DOCX
 - TXT
 
-Uploaded CVs are copied into `D:\JobHunter\resumes\`. Extracted resume text is stored in SQLite and used for matching and Ollama evaluation.
+Uploaded CVs are copied into `E:\JobHunter\resumes\`. Extracted resume text is stored in SQLite and used for matching and Ollama evaluation.
 
 ## Netlify frontend
 
@@ -115,7 +115,7 @@ The Netlify frontend requires an HTTPS URL that reaches the local backend. A tun
 http://127.0.0.1:8788
 ```
 
-Paste the HTTPS tunnel URL and the access key from `D:\JobHunter\config.json` into the app's connection panel.
+Paste the HTTPS tunnel URL and the access key from `E:\JobHunter\config.json` into the app's connection panel.
 
 The access key is kept in browser session storage, not bundled into the Netlify build.
 
@@ -128,4 +128,4 @@ Search results, statuses, profile data, CV text, and Ollama results are persiste
 
 ## Security model
 
-Every `/api/*` endpoint requires the private `X-JobHunter-Key` header. The key is generated locally on first run. Do not expose `D:\JobHunter\config.json` or hard-code the key into the frontend repository.
+Every `/api/*` endpoint requires the private `X-JobHunter-Key` header. The key is generated locally on first run. Do not expose `E:\JobHunter\config.json` or hard-code the key into the frontend repository.
