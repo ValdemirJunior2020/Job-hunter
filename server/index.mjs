@@ -1,4 +1,5 @@
 import express from 'express';
+import cors from 'cors';
 import Database from 'better-sqlite3';
 import multer from 'multer';
 import pdf from 'pdf-parse';
@@ -327,20 +328,27 @@ const upload = multer({
   limits: { fileSize: 10 * 1024 * 1024, files: 1 }
 });
 
-app.use(express.json({ limit: '4mb' }));
+const allowedOrigins = new Set([
+  'http://localhost:5180',
+  'http://127.0.0.1:5180',
+  'https://job-hunter-junior.netlify.app'
+]);
 
-app.use((req, res, next) => {
-  const origin = req.headers.origin;
-  if (origin) {
-    res.setHeader('Access-Control-Allow-Origin', origin);
-    res.setHeader('Vary', 'Origin');
-  }
-  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-JobHunter-Key');
-  res.setHeader('Access-Control-Max-Age', '86400');
-  if (req.method === 'OPTIONS') return res.status(204).end();
-  next();
-});
+app.use(cors({
+  origin(origin, callback) {
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.has(origin)) return callback(null, true);
+    if (/^https:\/\/[a-z0-9-]+--job-hunter-junior\.netlify\.app$/i.test(origin)) {
+      return callback(null, true);
+    }
+    return callback(new Error('Origin not allowed by Job Hunter CORS policy.'));
+  },
+  methods: ['GET', 'POST', 'PUT', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'X-JobHunter-Key'],
+  maxAge: 86400
+}));
+
+app.use(express.json({ limit: '4mb' }));
 
 app.use('/api', (req, res, next) => {
   const supplied = String(req.headers['x-jobhunter-key'] || '');
