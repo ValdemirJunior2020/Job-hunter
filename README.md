@@ -1,63 +1,128 @@
 # Job Hunter Junior
 
-A light, local-first job search dashboard inspired by the strongest ideas in **career-ops**, **ai-job-search**, and **Anveshana** while keeping this implementation free to run without a required paid AI API.
-
-## What it does
-
-- Searches free public job sources with no API key required.
-- Scores roles against your target roles, location, salary floor, and pasted resume.
-- Lets you save, ignore, and mark applications as applied.
-- Stores profile and pipeline state in your browser localStorage.
-- Keeps the final application decision with you.
-- Uses a light, minimal UI.
-- Includes demo roles so the frontend stays usable when a public source is unavailable.
-
-## Current free sources
-
-- Remotive public remote jobs endpoint.
-- Arbeitnow public job board endpoint.
-
-Public endpoints can change their limits or availability. The app is designed so more source adapters can be added without changing the UI.
-
-## Run
-
-```bash
-npm install
-npm run install:browsers
-npm run dev
-```
-
-Frontend: http://localhost:5173  
-Local server: http://127.0.0.1:8788
+A light React job-search frontend designed for Netlify, with a private Windows backend that stores your data on your own PC.
 
 ## Architecture
 
 ```
-React + Vite
-   |
-   +-- Local profile + pipeline state
-   |
-Express local server
-   |
-   +-- Free job-source adapters
-   +-- Normalization + dedupe
+Netlify React frontend
+        |
+        | HTTPS tunnel URL + private access key
+        v
+Your Windows PC
+  ├─ Node/Express private API
+  ├─ SQLite database: D:\JobHunter\job-hunter.db
+  ├─ CV files: D:\JobHunter\resumes\
+  └─ saved Ollama evaluations in SQLite
+
+Ollama runs separately as its normal local Windows service:
+http://127.0.0.1:11434
 ```
 
-## Product direction
+**D:\JobHunter is storage only. Ollama does not run from D:.**
 
-The next high-value additions are:
+## First local run
 
-1. Resume file import and parsing.
-2. Local Ollama scoring and job-gap explanations.
-3. Greenhouse / Lever / Ashby source adapters.
-4. Resume and cover-letter drafts that never invent experience.
-5. Human-reviewed application form preparation with Playwright.
-6. Interview tracker and outcome analytics.
+Requirements:
 
-## Principles
+- Node.js 20+ recommended
+- A `D:` drive
+- Ollama installed if you want AI scoring
 
-- Apply better to fewer roles.
-- Never fabricate resume facts.
-- No automatic final submission.
-- Prefer local storage and free sources.
-- Keep paid services optional, never required.
+Clone and run:
+
+```powershell
+git clone https://github.com/ValdemirJunior2020/Job-hunter.git
+cd Job-hunter
+npm install
+npm run dev
+```
+
+Or double-click:
+
+- `START-LOCAL.bat` — starts backend + local frontend
+- `START-BACKEND.bat` — starts only the PC backend for use with the Netlify frontend
+
+On the first backend start it automatically creates:
+
+```
+D:\JobHunter\
+├── job-hunter.db
+├── config.json
+└── resumes\
+```
+
+The private access key is inside:
+
+```
+D:\JobHunter\config.json
+```
+
+Do not commit or publish that key.
+
+## Ollama
+
+Ollama is optional for normal job search. For AI scoring:
+
+```powershell
+ollama list
+ollama pull llama3.2:3b
+```
+
+The backend checks:
+
+```
+http://127.0.0.1:11434
+```
+
+To force a particular installed model before starting the backend:
+
+```powershell
+$env:OLLAMA_MODEL="llama3.2:3b"
+npm run server
+```
+
+## CV upload
+
+Supported files:
+
+- PDF
+- DOCX
+- TXT
+
+Uploaded CVs are copied into `D:\JobHunter\resumes\`. Extracted resume text is stored in SQLite and used for matching and Ollama evaluation.
+
+## Netlify frontend
+
+Build command:
+
+```
+npm run build
+```
+
+Publish directory:
+
+```
+dist
+```
+
+The Netlify frontend requires an HTTPS URL that reaches the local backend. A tunnel can point to:
+
+```
+http://127.0.0.1:8788
+```
+
+Paste the HTTPS tunnel URL and the access key from `D:\JobHunter\config.json` into the app's connection panel.
+
+The access key is kept in browser session storage, not bundled into the Netlify build.
+
+## Free job sources currently included
+
+- Remotive
+- Arbeitnow
+
+Search results, statuses, profile data, CV text, and Ollama results are persisted to your SQLite database.
+
+## Security model
+
+Every `/api/*` endpoint requires the private `X-JobHunter-Key` header. The key is generated locally on first run. Do not expose `D:\JobHunter\config.json` or hard-code the key into the frontend repository.
