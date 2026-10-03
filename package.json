@@ -1,6 +1,6 @@
 {
   "name": "job-hunter-junior",
-  "version": "0.1.0",
+  "version": "0.3.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -8,14 +8,16 @@
     "client": "vite",
     "server": "node server/index.mjs",
     "build": "vite build",
-    "preview": "vite preview",
-    "install:browsers": "playwright install chromium"
+    "preview": "vite preview"
   },
   "dependencies": {
     "@vitejs/plugin-react": "^4.3.4",
+    "better-sqlite3": "^11.7.0",
     "concurrently": "^9.1.2",
     "express": "^5.1.0",
-    "playwright": "^1.55.0",
+    "mammoth": "^1.8.0",
+    "multer": "^1.4.5-lts.1",
+    "pdf-parse": "^1.1.1",
     "vite": "^6.1.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
