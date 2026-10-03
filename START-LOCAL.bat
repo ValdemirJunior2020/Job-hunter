@@ -2,10 +2,14 @@
 setlocal
 cd /d "%~dp0"
 
-if not exist node_modules (
-  call npm install
-  if errorlevel 1 pause & exit /b 1
-)
+echo.
+echo ==========================================
+echo   Job Hunter Junior - Local
+echo ==========================================
+echo.
+echo Syncing Node packages...
+call npm install
+if errorlevel 1 goto :error
 
 if not exist "D:\JobHunter" mkdir "D:\JobHunter"
 if not exist "D:\JobHunter\resumes" mkdir "D:\JobHunter\resumes"
@@ -15,3 +19,11 @@ timeout /t 2 /nobreak >nul
 start "Job Hunter Frontend" cmd /k "npm run client"
 timeout /t 2 /nobreak >nul
 start "" "http://localhost:5180"
+exit /b 0
+
+:error
+echo.
+echo Dependency install failed.
+echo Run: npm install
+pause
+exit /b 1
