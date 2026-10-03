@@ -1,131 +1,81 @@
 # Job Hunter Junior
 
-A light React job-search frontend designed for Netlify, with a private Windows backend that stores your data on your own PC.
+Netlify hosts the React frontend. Your Windows PC runs the private API, SQLite database, CV storage, and talks to local Ollama.
 
-## Architecture
+## Storage auto-detection
 
-```
-Netlify React frontend
-        |
-        | HTTPS tunnel URL + private access key
-        v
-Your Windows PC
-  ├─ Node/Express private API
-  ├─ SQLite database: E:\JobHunter\job-hunter.db
-  ├─ CV files: E:\JobHunter\resumes\
-  └─ saved Ollama evaluations in SQLite
+The backend chooses storage in this order:
 
-Ollama runs separately as its normal local Windows service:
-http://127.0.0.1:11434
-```
+1. `JOB_HUNTER_DATA_DIR` environment variable, if set.
+2. Existing `D:\JobHunter`.
+3. Existing `E:\JobHunter`.
+4. `D:\JobHunter` if D: exists.
+5. `E:\JobHunter` if E: exists.
+6. `%USERPROFILE%\JobHunter` as fallback.
 
-**E:\JobHunter is storage only. Ollama does not run from D:.**
+This means an existing `D:\JobHunter\config.json` and database are preserved automatically.
 
-## First local run
-
-Requirements:
-
-- Node.js 20+ recommended
-- An `E:` drive
-- Ollama installed if you want AI scoring
-
-Clone and run:
-
-```powershell
-git clone https://github.com/ValdemirJunior2020/Job-hunter.git
-cd Job-hunter
-npm install
-npm run dev
-```
-
-Local frontend: `http://localhost:5180`
-Local backend: `http://127.0.0.1:8788`
-
-Or double-click:
-
-- `START-LOCAL.bat` — starts backend + local frontend
-- `START-BACKEND.bat` — starts only the PC backend for use with the Netlify frontend
-
-On the first backend start it automatically creates:
+The storage folder contains:
 
 ```
-E:\JobHunter\
+JobHunter\
 ├── job-hunter.db
 ├── config.json
 └── resumes\
 ```
 
-The private access key is inside:
-
-```
-E:\JobHunter\config.json
-```
-
-Do not commit or publish that key.
-
-## Ollama
-
-Ollama is optional for normal job search. For AI scoring:
-
-```powershell
-ollama list
-ollama pull llama3.2:3b
-```
-
-The backend checks:
+Ollama is separate and normally runs at:
 
 ```
 http://127.0.0.1:11434
 ```
 
-To force a particular installed model before starting the backend:
+## Run backend
+
+```powershell
+git pull
+npm install
+npm run server
+```
+
+Or double-click `START-BACKEND.bat`.
+
+The terminal prints the exact database path and config path being used.
+
+## Netlify connection
+
+Keep the backend and Cloudflare tunnel running:
+
+```powershell
+cloudflared tunnel --url http://127.0.0.1:8788
+```
+
+In the Netlify app, enter:
+
+- Backend HTTPS URL: the current `https://...trycloudflare.com` URL
+- Private access key: the `accessKey` from the config file printed by the backend
+
+## CV upload
+
+PDF, DOCX, and TXT are supported. Files and extracted text stay on your PC.
+
+## Ollama
+
+The backend checks local Ollama and uses an installed model for job-fit analysis. You can select a default model before launch:
 
 ```powershell
 $env:OLLAMA_MODEL="llama3.2:3b"
 npm run server
 ```
 
-## CV upload
-
-Supported files:
-
-- PDF
-- DOCX
-- TXT
-
-Uploaded CVs are copied into `E:\JobHunter\resumes\`. Extracted resume text is stored in SQLite and used for matching and Ollama evaluation.
-
-## Netlify frontend
-
-Build command:
+## Local frontend
 
 ```
-npm run build
+http://localhost:5180
 ```
 
-Publish directory:
-
-```
-dist
-```
-
-The Netlify frontend requires an HTTPS URL that reaches the local backend. A tunnel can point to:
+## Local backend
 
 ```
 http://127.0.0.1:8788
 ```
-
-Paste the HTTPS tunnel URL and the access key from `E:\JobHunter\config.json` into the app's connection panel.
-
-The access key is kept in browser session storage, not bundled into the Netlify build.
-
-## Free job sources currently included
-
-- Remotive
-- Arbeitnow
-
-Search results, statuses, profile data, CV text, and Ollama results are persisted to your SQLite database.
-
-## Security model
-
-Every `/api/*` endpoint requires the private `X-JobHunter-Key` header. The key is generated locally on first run. Do not expose `E:\JobHunter\config.json` or hard-code the key into the frontend repository.
