@@ -95,7 +95,7 @@ export default function App(){
 
   const uploadCv=async(e)=>{
     const file=e.target.files?.[0]; if(!file)return;
-    setBusy(true);setMessage(`Saving ${file.name} to your E: drive...`);
+    setBusy(true);setMessage(`Saving ${file.name} to your local storage...`);
     try{
       const form=new FormData(); form.append('cv',file);
       const data=await api('/api/resume',{method:'POST',body:form});
@@ -110,7 +110,7 @@ export default function App(){
     try{
       const data=await api(`/api/search?q=${encodeURIComponent(query)}&location=${encodeURIComponent(location)}`);
       setJobs(data.jobs||[]);
-      setMessage(`Saved ${data.jobs?.length||0} jobs into E:\\JobHunter\\job-hunter.db`);
+      setMessage(`Saved ${data.jobs?.length||0} jobs to your local database`);
     }catch(e){setMessage(e.message)}finally{setBusy(false)}
   };
 
@@ -147,18 +147,18 @@ export default function App(){
       <div className="brand"><div className="brand-mark">JH</div><div><strong>Job Hunter</strong><span>Junior</span></div></div>
       <nav>{['Best Matches','Saved','Applied','Ignored'].map(item=><button key={item} className={tab===item?'nav-item active':'nav-item'} onClick={()=>setTab(item)}><Icon name={item==='Saved'?'star':item==='Applied'?'check':item==='Ignored'?'x':'briefcase'}/>{item}{item==='Saved'&&<b>{stats.saved}</b>}{item==='Applied'&&<b>{stats.applied}</b>}</button>)}</nav>
       <div className={connected?'connection-card online':'connection-card'}>
-        <span className="connection-dot"/><div><strong>{connected?'PC Backend Online':'PC Backend Offline'}</strong><span>{connected?(ollama.online?`Ollama: ${ollama.model||'online'}`:'Ollama service offline'):'Connect to your E: database'}</span></div>
+        <span className="connection-dot"/><div><strong>{connected?'PC Backend Online':'PC Backend Offline'}</strong><span>{connected?(ollama.online?`Ollama: ${ollama.model||'online'}`:'Ollama service offline'):'Connect to your local database'}</span></div>
       </div>
     </aside>
 
     <main>
-      <header><div><p className="eyebrow">NETLIFY FRONTEND · YOUR PC BACKEND</p><h1>Find less. Match better. Apply faster.</h1><p>Your database, CVs, job history, and saved AI results stay under <b>E:\\JobHunter</b>. Ollama runs separately as your normal local Windows service.</p></div><button className="profile-button" onClick={()=>setShowProfile(!showProfile)}><Icon name="user"/> My Profile</button></header>
+      <header><div><p className="eyebrow">NETLIFY FRONTEND · YOUR PC BACKEND</p><h1>Find less. Match better. Apply faster.</h1><p>Your database, CVs, job history, and saved AI results stay under <b>your PC storage</b>. Ollama runs separately as your normal local Windows service.</p></div><button className="profile-button" onClick={()=>setShowProfile(!showProfile)}><Icon name="user"/> My Profile</button></header>
 
       <section className="connect-panel">
         <div className="section-heading"><div><span className="kicker">PRIVATE BACKEND</span><h2>Connect Netlify to your PC</h2></div><span className={connected?'badge-ok':'badge-warn'}>{connected?'CONNECTED':'NOT CONNECTED'}</span></div>
         <div className="connect-grid">
           <label>Backend HTTPS URL<input value={backendUrl} onChange={e=>setBackendUrl(e.target.value)} placeholder="https://your-tunnel.example.com"/></label>
-          <label>Private access key<input type="password" value={accessKey} onChange={e=>setAccessKey(e.target.value)} placeholder="Paste key from E:\JobHunter\config.json"/></label>
+          <label>Private access key<input type="password" value={accessKey} onChange={e=>setAccessKey(e.target.value)} placeholder="Paste key from your JobHunter config.json"/></label>
           <button className="primary" onClick={connect} disabled={busy}><Icon name="plug"/>{busy?'Connecting...':'Connect'}</button>
         </div>
         <p className="status-line">{message}</p>
@@ -172,7 +172,7 @@ export default function App(){
           <label>Minimum salary<input type="number" value={profile.minSalary} onChange={e=>saveProfile({...profile,minSalary:e.target.value})}/></label>
         </div>
         <label>Resume text<textarea rows="7" value={profile.resume} onChange={e=>saveProfile({...profile,resume:e.target.value})} placeholder="Upload PDF/DOCX/TXT or paste resume text here."/></label>
-        {profile.resumeFile&&<p className="file-note">Current CV: <b>{profile.resumeFile}</b> · Stored on E: drive</p>}
+        {profile.resumeFile&&<p className="file-note">Current CV: <b>{profile.resumeFile}</b> · Stored on local storage</p>}
       </section>}
 
       <section className="search-panel"><div className="search-row"><div className="search-box"><Icon name="search"/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Job title or skill"/></div><input className="location-input" value={location} onChange={e=>setLocation(e.target.value)} placeholder="Location or Remote"/><button className="primary" onClick={searchJobs} disabled={busy||!connected}><Icon name={busy?'refresh':'search'}/>{busy?'Working...':'Search jobs'}</button></div></section>
