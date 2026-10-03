@@ -10,15 +10,15 @@ import crypto from 'node:crypto';
 const app = express();
 const PORT = Number(process.env.PORT || 8788);
 const HOST = process.env.HOST || '127.0.0.1';
-const DATA_DIR = process.env.JOB_HUNTER_DATA_DIR || 'D:\\JobHunter';
+const DATA_DIR = process.env.JOB_HUNTER_DATA_DIR || 'E:\\JobHunter';
 const DB_PATH = path.join(DATA_DIR, 'job-hunter.db');
 const RESUME_DIR = path.join(DATA_DIR, 'resumes');
 const CONFIG_PATH = path.join(DATA_DIR, 'config.json');
 const OLLAMA_URL = (process.env.OLLAMA_URL || 'http://127.0.0.1:11434').replace(/\/$/, '');
 const OLLAMA_MODEL = process.env.OLLAMA_MODEL || '';
 
-if (!fs.existsSync('D:\\') && !process.env.JOB_HUNTER_DATA_DIR) {
-  console.error('D: drive was not found. Set JOB_HUNTER_DATA_DIR if you want a different storage location.');
+if (!fs.existsSync('E:\\') && !process.env.JOB_HUNTER_DATA_DIR) {
+  console.error('E: drive was not found. Set JOB_HUNTER_DATA_DIR if you want a different storage location.');
   process.exit(1);
 }
 
